@@ -112,7 +112,7 @@ type PiecePlacement = {
 
 export class ChessBoard {
   /** Array[12] of pieces */
-  private __board: bigint[] = [];
+  private __bitboards: bigint[] = [];
 
   /** Bitmask of aditional game info -- see enum */
   private __additionalInfo: number = 0;
@@ -128,7 +128,7 @@ export class ChessBoard {
   }
 
   private __isSquareOccupied(square: SQUARES): boolean {
-    return this.__board.some(
+    return this.__bitboards.some(
       (bitboard) => bitboard & (SINGLE_BIT << BigInt(square))
     );
   }
@@ -145,7 +145,7 @@ export class ChessBoard {
   }
 
   public constructor(pieces?: PiecePlacement[]) {
-    this.__board = ChessBoard.__buildEmptyBoard();
+    this.__bitboards = ChessBoard.__buildEmptyBoard();
 
     if (typeof pieces === "undefined") {
       this.reset();
@@ -161,28 +161,26 @@ export class ChessBoard {
   }
 
   public reset(): void {
-    this.__board[PIECES.WHITE_PAWN] = WHITE_PAWN_START;
-    this.__board[PIECES.WHITE_KNIGHT] = WHITE_KNIGHT_START;
-    this.__board[PIECES.WHITE_BISHOP] = WHITE_BISHOP_START;
-    this.__board[PIECES.WHITE_ROOK] = WHITE_ROOK_START;
-    this.__board[PIECES.WHITE_QUEEN] = WHITE_QUEEN_START;
-    this.__board[PIECES.WHITE_KING] = WHITE_KING_START;
+    this.__bitboards[PIECES.WHITE_PAWN] = WHITE_PAWN_START;
+    this.__bitboards[PIECES.WHITE_KNIGHT] = WHITE_KNIGHT_START;
+    this.__bitboards[PIECES.WHITE_BISHOP] = WHITE_BISHOP_START;
+    this.__bitboards[PIECES.WHITE_ROOK] = WHITE_ROOK_START;
+    this.__bitboards[PIECES.WHITE_QUEEN] = WHITE_QUEEN_START;
+    this.__bitboards[PIECES.WHITE_KING] = WHITE_KING_START;
 
-    this.__board[PIECES.BLACK_PAWN] = BLACK_PAWN_START;
-    this.__board[PIECES.BLACK_KNIGHT] = BLACK_KNIGHT_START;
-    this.__board[PIECES.BLACK_BISHOP] = BLACK_BISHOP_START;
-    this.__board[PIECES.BLACK_ROOK] = BLACK_ROOK_START;
-    this.__board[PIECES.BLACK_QUEEN] = BLACK_QUEEN_START;
-    this.__board[PIECES.BLACK_KING] = BLACK_KING_START;
+    this.__bitboards[PIECES.BLACK_PAWN] = BLACK_PAWN_START;
+    this.__bitboards[PIECES.BLACK_KNIGHT] = BLACK_KNIGHT_START;
+    this.__bitboards[PIECES.BLACK_BISHOP] = BLACK_BISHOP_START;
+    this.__bitboards[PIECES.BLACK_ROOK] = BLACK_ROOK_START;
+    this.__bitboards[PIECES.BLACK_QUEEN] = BLACK_QUEEN_START;
+    this.__bitboards[PIECES.BLACK_KING] = BLACK_KING_START;
 
     this.__additionalInfo = STARTING_ADDITIONAL_INFO;
   }
 
   public getPieceOn(square: SQUARES): PIECES | undefined {
-    for (let i = 0; i < this.__board.length; i++) {
-      if (this.__board[i] & bits(square)) {
-        return i;
-      }
+    for (let piece = 0; piece < this.__bitboards.length; piece++) {
+      if (this.__bitboards[piece] & bits(square)) return piece;
     }
 
     return undefined;
@@ -195,11 +193,11 @@ export class ChessBoard {
 
   public placePiece(piece: PIECES, square: SQUARES): void {
     if (this.__isSquareOccupied(square)) return;
-    this.__board[piece] |= bits(square);
+    this.__bitboards[piece] |= bits(square);
   }
 
   public getBoardState(): BoardState {
-    return { board: this.__board };
+    return { board: this.__bitboards };
   }
 
   // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
@@ -258,6 +256,6 @@ export class ChessBoard {
     if (piece === undefined) return;
     if (this.__isSquareOccupied(to)) return;
     this.placePiece(piece, to);
-    this.__board[piece] &= ~bits(from);
+    this.__bitboards[piece] &= ~bits(from);
   }
 }

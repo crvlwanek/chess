@@ -3,12 +3,16 @@
 import { DragEventHandler, useCallback, useState } from "react";
 import { ChessBoard } from "../../lib/ChessBoard";
 
+export default function Home() {
+  return <ChessBoardComponent />;
+}
+
 const getColor = (index: number): string => {
   const mod2 = index % 2;
   const mod8 = Math.floor(index / 8);
 
   const val = mod8 % 2 ? !mod2 : mod2;
-  return val ? "bg-lime-600/70" : "bg-amber-200/30";
+  return val ? "bg-lime-600/70" : "bg-yellow-200/30";
 };
 
 const ChessSquare = ({
@@ -70,7 +74,7 @@ const ChessBoardComponent = () => {
     setFEN(board.toFEN());
   }, [setBoard]);
   return (
-    <div className="text-5xl p-2 font-mono w-full h-full flex items-center justify-center flex-col">
+    <div className="text-5xl p-2 font-mono flex flex-col items-center justify-center w-full h-screen gap-4">
       <div className="grid grid-cols-8 grid-rows-8 justify-center select-none border-lime-800 border-4">
         {Array(64)
           .fill(0)
@@ -83,9 +87,9 @@ const ChessBoardComponent = () => {
             />
           ))}
       </div>
-      <div className="text-lg mt-4">{fen}</div>
+      <div className="text-lg">{fen}</div>
       <button
-        className="text-lg rounded-sm bg-red-500 text-white py-2 px-4 cursor-pointer mt-8"
+        className="text-lg rounded-sm bg-red-500 text-white py-2 px-4 cursor-pointer"
         onClick={reset}
       >
         Reset
@@ -93,7 +97,3 @@ const ChessBoardComponent = () => {
     </div>
   );
 };
-
-export default function Home() {
-  return <ChessBoardComponent />;
-}
