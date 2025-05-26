@@ -65,7 +65,7 @@ const ChessSquare = ({
   return (
     <div
       key={index}
-      className={`${getColor(index)} hover:bg-yellow-200`}
+      className={`${getColor(index)} hover:bg-yellow-200 relative`}
       onDragOver={onDragOver}
       onDrop={onDrop}
     >
@@ -74,6 +74,7 @@ const ChessSquare = ({
           iconKey={pieceMap[piece]}
           draggable
           onDragStart={onDragStart}
+          className="absolute inset-0.5"
         />
       )}
     </div>
